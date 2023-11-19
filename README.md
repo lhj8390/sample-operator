@@ -78,6 +78,21 @@ kubebuilder create api --group <그룹 이름> --version <버전 명> --kind <�
   - `+groupName=batch.tutorial.kubebuilder.io` : CRD들에 대한 올바른 메타데이터를 생성하기 위해 CRD 생성기에 의해 사용되는 마커
 - zz_generated.deepcopy.go : runtime.Object 인터페이스가 사용하는 deepcopy 메서드.
 
+## Implementing a controller
+
+### CronJob Controller example
+
+CronJob Controller의 기본 로직은 다음과 같다.
+1. CronJob 로드
+2. 실행중인 Job 목록을 가져오고, 상태를 업데이트
+3. history 노출 개수에 따라 오래된 Job 정리
+4. Job이 중지되었는지 확인 (중지 상태라면 다른 Job을 실행하지 않음)
+5. 예약된 다음 Job 가져오기
+6. deadline을 넘기지 않고, concurrency 정책에 의해 차단되지 않을 경우 새 Job 실행
+7. 실행 중인 Job을 보거나 다음 Job의 실행 시간이 되었을 때 Requeue.
+
+이러한 로직을 internal/controller 디렉터리 내부의 `cronjob_controller.go`에서 구현한다.
+
 ## Contributing
 // TODO(user): Add detailed information on how you would like others to contribute to this project
 
